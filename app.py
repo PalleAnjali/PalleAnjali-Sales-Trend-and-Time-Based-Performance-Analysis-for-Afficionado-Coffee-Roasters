@@ -14,7 +14,7 @@ st.title("☕ Sales Trend and Time-Based Performance Analysis for Afficionado Co
 # ---------------------------
 # 1️⃣ Load Data
 # ---------------------------
-df = pd.read_csv(r"Afficionado Coffee Roasters")
+df = pd.read_csv(r"Afficionado Coffee Roasters.csv")
 
 def load_data():
     df['transaction_datetime'] = pd.to_datetime(df['transaction_datetime'])
