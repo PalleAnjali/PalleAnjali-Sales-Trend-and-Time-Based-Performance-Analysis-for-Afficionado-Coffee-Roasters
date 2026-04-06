@@ -11,6 +11,17 @@ warnings.filterwarnings("ignore")
 st.set_page_config(page_title="Live Coffee Sales Dashboard", layout="wide")
 st.title("☕ Sales Trend and Time-Based Performance Analysis for Afficionado Coffee Roasters")
 
+st.markdown("""
+<style>
+div[data-testid="stPlotlyChart"] {
+    border: 1px solid #e6e6e6;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fafafa;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # ---------------------------
 # 1️⃣ Load Data
 # ---------------------------
@@ -65,15 +76,15 @@ total_transactions = df_filtered['transaction_qty'].sum()
 total_orders = df_filtered['transaction_id'].nunique()
 total_value = df_filtered[metric_col].sum()
 
-col1, col2, col3 = st.columns(3)
+k1, k2, k3 = st.columns(3)
 
-with col1:
+with k1:
     st.metric("💰 Total Revenue", f"${total_revenue:,.0f}")
 
-with col2:
+with k2:
     st.metric("🛒 Transaction Quantity", f"{total_transactions:,}")
 
-with col3:
+with k3:
     st.metric("📦 Total Orders", f"{total_orders:,}")
     col1, col2 = st.columns(2)
 
@@ -82,8 +93,10 @@ with col3:
 # Overall Sales Trend
 # ---------------------------
 st.subheader("📈 Overall Sales Trend")
+col1, col2, col3 = st.columns(3)
 
-daily_sales = df_filtered.resample('D', on='transaction_datetime')[metric_col].sum()
+with col1:
+  daily_sales = df_filtered.resample('D', on='transaction_datetime')[metric_col].sum()
 
 fig = px.line(
     x=daily_sales.index,
@@ -119,8 +132,8 @@ st.download_button(
 
 # Weekly Sales Trend
 # ---------------------------
-
-weekly_sales = df_filtered.resample('W', on='transaction_datetime')[metric_col].sum()
+with col2:
+    weekly_sales = df_filtered.resample('W', on='transaction_datetime')[metric_col].sum()
 fig1_weekly = px.line(
     x=weekly_sales.index,
     y=weekly_sales.values,
@@ -153,8 +166,8 @@ st.download_button(
 # ---------------------------
 # Monthly Sales Trend
 # ---------------------------
-
-monthly_sales = df_filtered.resample('ME', on='transaction_datetime')[metric_col].sum()
+with col3:
+     monthly_sales = df_filtered.resample('ME', on='transaction_datetime')[metric_col].sum()
 fig2_monthly = px.line(
     x=monthly_sales.index,
     y=monthly_sales.values,
@@ -185,8 +198,12 @@ st.download_button(
 # ---------------------------
 # Day-of-Week Performance
 # ---------------------------
+col4, col5 = st.columns(2)
+
+
 st.subheader("📊 Day-of-Week Performance")
-dow_sales = df_filtered.groupby('day_of_week')[metric_col].sum().reindex(
+with col4:
+     dow_sales = df_filtered.groupby('day_of_week')[metric_col].sum().reindex(
     ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 )
 yticks = np.arange(1000, dow_sales.max()+ 2000,2000)
@@ -229,7 +246,8 @@ st.download_button(
 # Hourly Demand Heatmap
 # ---------------------------
 st.subheader("⏰ Hourly Demand Heatmap")
-hourly_sales = df_filtered.pivot_table(index='day_of_week', columns='hour', values=metric_col, aggfunc='sum').reindex(
+with col5:
+     hourly_sales = df_filtered.pivot_table(index='day_of_week', columns='hour', values=metric_col, aggfunc='sum').reindex(
     ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 )
 fig4, ax4 = plt.subplots(figsize=(14,5))
@@ -251,8 +269,10 @@ st.download_button(
 # ---------------------------
 # Location Comparison Panel
 # ---------------------------
+col6 = st.columns(1)[0]
 st.subheader("🏪 " + metric_option + " by Store Location")
-location_sales = df.groupby('store_location')[metric_col].sum()  # notice 'location_sales' is renamed for consistency
+with col6:
+    location_sales = df.groupby('store_location')[metric_col].sum()  # notice 'location_sales' is renamed for consistency
 fig5 = px.bar(
     location_sales, 
     x=location_sales.index, 
