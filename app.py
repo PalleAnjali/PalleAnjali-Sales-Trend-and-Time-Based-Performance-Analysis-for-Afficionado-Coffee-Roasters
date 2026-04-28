@@ -107,6 +107,14 @@ ax.grid(True)
 plt.xticks(rotation=45)
 
 st.plotly_chart(fig, width="stretch")
+peak_day = daily_sales.idxmax()
+low_day = daily_sales.idxmin()
+
+st.info(f"""
+📈 Sales peaked on **{peak_day.date()}**  
+📉 Lowest performance was on **{low_day.date()}**  
+🔍 Indicates short-term demand fluctuations and possible seasonal spikes.
+""")
 csv = daily_sales.to_csv(index=False).encode('utf-8')
 
 st.download_button(
@@ -140,6 +148,12 @@ fig1_weekly.update_layout(
     margin=dict(l=50, r=50, t=80, b=50)
 )
 st.plotly_chart(fig1_weekly, width="stretch")
+peak_week = weekly_sales.idxmax()
+
+st.info(f"""
+📊 Highest weekly performance observed during **{peak_week.date()}** week  
+📅 Weekly trends help identify consistent growth or decline patterns.
+""")
 csv = weekly_sales.to_csv(index=False).encode('utf-8')
 
 st.download_button(
@@ -173,6 +187,12 @@ ax2.set_ylabel(metric_option)
 ax2.set_title("Monthly " + metric_option + " Trend")
 ax2.grid(True)
 st.plotly_chart(fig2_monthly, width='stretch')
+best_month = monthly_sales.idxmax()
+
+st.info(f"""
+📆 Best performing month: **{best_month.strftime('%B %Y')}**  
+📈 Shows long-term growth trend and seasonal demand behavior.
+""")
 csv = monthly_sales.to_csv(index=False).encode('utf-8')
 
 st.download_button(
@@ -215,6 +235,14 @@ plt.tight_layout()
 # grid for dashboard look
 ax3.grid(axis="y", linestyle="--", alpha=0.6)
 st.plotly_chart(fig3, width='stretch')
+peak_day = dow_sales.idxmax()
+low_day = dow_sales.idxmin()
+
+st.info(f"""
+📌 Highest sales occur on **{peak_day}**  
+📉 Lowest sales occur on **{low_day}**  
+🧠 Suggests strong weekday/weekend demand differences.
+""")
 csv = dow_sales.to_csv(index=False).encode('utf-8')
 
 st.download_button(
@@ -238,6 +266,14 @@ ax4.set_xlabel("Hour of Day")
 ax4.set_ylabel(metric_option)
 ax4.set_title(metric_option + " Heatmap by Hour & Day")
 st.pyplot(fig4)
+peak_hour = hourly_sales.sum().idxmax()
+peak_day_hour = hourly_sales.stack().idxmax()
+
+st.info(f"""
+⏰ Peak demand hour: **{peak_hour}:00 hrs**  
+🔥 Highest intensity observed on **{peak_day_hour[0]} at {peak_day_hour[1]}:00 hrs**  
+📊 Helps optimize staffing and inventory during peak hours.
+""")
 csv = hourly_sales.to_csv(index=False).encode('utf-8')
 
 st.download_button(
@@ -264,6 +300,14 @@ fig5 = px.bar(
     title=metric_option + " by Store Location"
 )
 st.plotly_chart(fig5, width='stretch')
+best_location = location_sales.idxmax()
+Lowperf_location = location_sales.idxmin()
+
+st.info(f"""
+🏪 Top performing store: **{best_location}**  
+📉 Lowest performing store: **{Lowperf_location}**  
+📍 Useful for regional strategy and resource allocation.
+""")
 csv = location_sales.to_csv(index=False).encode('utf-8')
 
 st.download_button(
